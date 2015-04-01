@@ -1,7 +1,7 @@
 // adapted from the STL class by Marius Watz (part of unlekkerlib from processing)
 // taken from http://workshop.evolutionzone.com/unlekkerlib/ on 06/12/09
 // converted to C++ by Marek Bereza
-
+// slightly tweaked by George Profenza
 
 #include "ofxSTLModel.h"
 
@@ -15,14 +15,7 @@ ofxSTLModel::ofxSTLModel() {
  * Draws the object.
  */
 void ofxSTLModel::draw() {
-	glBegin(GL_TRIANGLES);
-	for(int i=0; i<triangles.size(); i++) {
-		glNormal3f(triangles[i].v[0], triangles[i].v[1], triangles[i].v[2]);
-		glVertex3f(triangles[i].v[3], triangles[i].v[4], triangles[i].v[5]);
-		glVertex3f(triangles[i].v[6], triangles[i].v[7], triangles[i].v[8]);
-		glVertex3f(triangles[i].v[9], triangles[i].v[10], triangles[i].v[11]);
-	}
-	glEnd();
+	vboMesh.draw();
 }
 
 /**
@@ -114,6 +107,13 @@ void ofxSTLModel::read(string path) {
 		//if(i%1000==0) printf("%d triangles read.", i);
 	}
 	file.close();
+	
+	for(int i=0; i< triangles.size(); i++) {
+		vboMesh.addNormal(ofVec3f(triangles[i].v[0], triangles[i].v[1], triangles[i].v[2]));
+		vboMesh.addVertex(ofVec3f(triangles[i].v[3], triangles[i].v[4], triangles[i].v[5]));
+		vboMesh.addVertex(ofVec3f(triangles[i].v[6], triangles[i].v[7], triangles[i].v[8]));
+		vboMesh.addVertex(ofVec3f(triangles[i].v[9], triangles[i].v[10], triangles[i].v[11]));
+	}
 }
 
 	

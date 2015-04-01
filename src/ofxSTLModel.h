@@ -1,6 +1,7 @@
 // adapted from the STL class by Marius Watz (part of unlekkerlib from processing)
 // taken from http://workshop.evolutionzone.com/unlekkerlib/ on 06/12/09
 // converted to C++ by Marek Bereza
+// slightly tweaked by George Profenza
 
 /**
  * Class to export and import binary STL (stereolithography) files from Processing. 
@@ -53,6 +54,8 @@ public:
 	
 	/** Array of STLFace objects comprising the current geometry. */
 	vector<STLFace> triangles;
+	/** Mesh to be drawn on screen */
+	ofVboMesh vboMesh;
 
 	/**
 	 * Centers the object around the world origin. 
@@ -68,7 +71,6 @@ private:
 	float minx,maxx,miny,maxy,minz,maxz,centerx,centery,centerz;
 	float mult;
 	void calcBounds();
-	
 	
 
 		
