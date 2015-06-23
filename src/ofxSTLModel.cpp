@@ -15,7 +15,8 @@ ofxSTLModel::ofxSTLModel() {
  * Draws the object.
  */
 void ofxSTLModel::draw() {
-	vboMesh.draw();
+    
+	getMesh().draw();
 }
 
 /**
@@ -60,6 +61,8 @@ void ofxSTLModel::center() {
 	float ty=(miny+maxy)/2;
 	float tz=(minz+maxz)/2;
 	for(int i=0; i<triangles.size(); i++) triangles[i].translate(-tx,-ty,-tz);
+    
+    verticesChanged = true;
 }
 
 	
@@ -78,12 +81,14 @@ void ofxSTLModel::normalize(float m) {
 	float ty=m/max;
 	float tz=m/max;
 	for(int i=0; i<triangles.size(); i++) triangles[i].scale(tx,ty,tz);
+    
+    verticesChanged = true;
 }
 	
 	
-	/////////////////////////////////////////////
-	// FUNCTIONS FOR STL INPUT
-	
+/////////////////////////////////////////////
+// FUNCTIONS FOR STL INPUT
+
 void ofxSTLModel::read(string path) {
 	
 	char header[80];
@@ -108,16 +113,11 @@ void ofxSTLModel::read(string path) {
 	}
 	file.close();
 	
-	for(int i=0; i< triangles.size(); i++) {
-		vboMesh.addNormal(ofVec3f(triangles[i].v[0], triangles[i].v[1], triangles[i].v[2]));
-		vboMesh.addVertex(ofVec3f(triangles[i].v[3], triangles[i].v[4], triangles[i].v[5]));
-		vboMesh.addVertex(ofVec3f(triangles[i].v[6], triangles[i].v[7], triangles[i].v[8]));
-		vboMesh.addVertex(ofVec3f(triangles[i].v[9], triangles[i].v[10], triangles[i].v[11]));
-	}
+    verticesChanged = true;
+    
 }
 
-	
-	
+
 	
 /////////////////////////////////////////////
 // FUNCTIONS FOR RAW STL OUTPUT
@@ -174,5 +174,28 @@ void ofxSTLModel::addTriangle(float nX, float nY, float nZ,
 	
 	triangles[triangles.size()-1].parseFace((char*)data);
 	
+}
+
+void ofxSTLModel::loadMesh() {
+    vboMesh.clear();
+    
+    float *v;
+    for(int i=0; i< triangles.size(); i++) {
+        v = triangles[i].v;
+        vboMesh.addNormal(ofVec3f(v[0], v[1], v[2]));
+        vboMesh.addVertex(ofVec3f(v[3], v[4], v[5]));
+        vboMesh.addVertex(ofVec3f(v[6], v[7], v[8]));
+        vboMesh.addVertex(ofVec3f(v[9], v[10], v[11]));
+    }
+}
+
+ofVboMesh& ofxSTLModel::getMesh() {
+    
+    if (verticesChanged) {
+        loadMesh();
+        verticesChanged = false;
+    }
+    
+    return vboMesh;
 }
 

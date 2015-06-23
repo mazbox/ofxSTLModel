@@ -54,9 +54,11 @@ public:
 	
 	/** Array of STLFace objects comprising the current geometry. */
 	vector<STLFace> triangles;
-	/** Mesh to be drawn on screen */
-	ofVboMesh vboMesh;
-
+		
+    
+    /** Retrieve the mesh used for drawing. */
+    ofVboMesh& getMesh();
+    
 	/**
 	 * Centers the object around the world origin. 
 	 */
@@ -72,8 +74,9 @@ private:
 	float mult;
 	void calcBounds();
 	
-
-		
-
-		
+    /** Mesh to be drawn on screen */
+    ofVboMesh vboMesh;
+    
+    bool verticesChanged;
+    void loadMesh();
 };

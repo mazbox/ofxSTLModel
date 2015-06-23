@@ -19,7 +19,7 @@ void testApp::draw(){
 		ofScale(10,10,10);
 		ofRotate(ofGetFrameNum(), 1,1,0);
 		if(wireframe){
-			model.vboMesh.drawWireframe();
+			model.getMesh().drawWireframe();
 		}else{
 			model.draw();
 		}
