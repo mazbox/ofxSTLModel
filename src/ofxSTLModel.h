@@ -38,6 +38,8 @@ public:
 	 * Write a binary encoded STL file. (created in the data folder)
 	 */
 	void write(string path);
+    
+    static void writeMesh(string path, const ofMesh &mesh);
 	
 	
 	/**
@@ -50,13 +52,18 @@ public:
 					 float x1, float y1, float z1,
 					 float x2, float y2, float z2,
 					 float x3, float y3, float z3
-	);	
+	);
+    
+
+    void addTriangle(const ofVec3f &normal, const ofVec3f &v1, const ofVec3f &v2, const ofVec3f &v3);
 	
 	/** Array of STLFace objects comprising the current geometry. */
 	vector<STLFace> triangles;
-	/** Mesh to be drawn on screen */
-	ofVboMesh vboMesh;
-
+		
+    
+    /** Retrieve the mesh used for drawing. */
+    ofVboMesh& getMesh();
+    
 	/**
 	 * Centers the object around the world origin. 
 	 */
@@ -72,8 +79,9 @@ private:
 	float mult;
 	void calcBounds();
 	
-
-		
-
-		
+    /** Mesh to be drawn on screen */
+    ofVboMesh vboMesh;
+    
+    bool verticesChanged;
+    void loadMesh();
 };
