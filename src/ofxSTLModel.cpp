@@ -143,7 +143,51 @@ void ofxSTLModel::write(string path) {
 	file.close();
 }
 
-	
+void ofxSTLModel::writeMesh(string path, const ofMesh &mesh) {
+    
+    
+    if (mesh.getMode() != OF_PRIMITIVE_TRIANGLES) {
+        ofLogError("ofxSTLModel::writeMesh") << "Trying to write mesh which isn't stores as triangles. Bailing!";
+        return;
+    }
+    
+    const vector<ofIndexType> &indices = mesh.getIndices();
+    size_t Ni = indices.size();
+    
+    if (Ni % 3 != 0) {
+        ofLogError("ofxSTLModel::writeMesh") << "Something wrong with mesh indices";
+        return;
+    }
+    
+    const vector<ofVec3f> &verts = mesh.getVertices();
+    const vector<ofVec3f> &normals = mesh.getNormals();
+
+    ofxSTLModel model;
+    ofIndexType j0, j1, j2;
+    ofVec3f normal;
+    
+    for (size_t i = 0; i < Ni; i+= 3) {
+        
+        j0 = indices[i];
+        j1 = indices[i+1];
+        j2 = indices[i+2];
+        if (normals.size() > 0) {
+            normal = normals[i/3];
+        }
+        
+        model.addTriangle(normal, verts[j0], verts[j1], verts[j2]);
+    }
+    
+    stringstream ss;
+    ss << "writing mesh with " << indices.size() << " indices, ";
+    ss << verts.size() << " vertices, and ";
+    ss << normals.size() << " normals. ";
+    ss << "(" << (Ni/3) << " triangles)";
+    ofLogNotice("ofxSTLModel::writeMesh") << ss.str();
+    
+    model.write(path);
+}
+
 		
 	
 void ofxSTLModel::addTriangle(float nX, float nY, float nZ,
@@ -175,6 +219,16 @@ void ofxSTLModel::addTriangle(float nX, float nY, float nZ,
 	triangles[triangles.size()-1].parseFace((char*)data);
 	
 }
+
+
+void ofxSTLModel::addTriangle(const ofVec3f &normal, const ofVec3f &v1, const ofVec3f &v2, const ofVec3f &v3) {
+    
+    addTriangle(normal.x, normal.y, normal.z,
+                v1.x, v1.y, v1.z,
+                v2.x, v2.y, v2.z,
+                v3.x, v3.y, v3.z);
+}
+
 
 void ofxSTLModel::loadMesh() {
     vboMesh.clear();
